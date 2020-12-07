@@ -1,7 +1,7 @@
 {
   "name": "@manufosela/loading-layer",
   "description": "Lit-Element webcomponent loading-layer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "loading-layer.js",
   "repository": {
     "type": "git",

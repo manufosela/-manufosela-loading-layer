@@ -35,6 +35,31 @@ export class LoadingLayer extends LitElement {
         type: Number,
         attribute: 'image-size',
       },
+      /**
+       * On Load Start
+       * @property
+       * @type { Boolean }
+       */
+      onLoadStart: { 
+        type: Boolean,
+        attribute: 'on-loadstart',
+      },
+      /**
+       * Frecuency
+       * @property
+       * @type { Number }
+       */
+      frecuency: { 
+        type: Number,
+      },
+      /**
+       * Timeout
+       * @property
+       * @type { Number }
+       */
+      timeout: { 
+        type: Number,
+      },
     };
   }
 
@@ -46,17 +71,19 @@ export class LoadingLayer extends LitElement {
     super();
     this.loadLayerId = `LoadLayer-${Date.now()}`;
     this.loadLayerBlackedId = this.loadLayerId.replace('-', '-blacked-');
+    this.onLoadStart = false;
 
     this.imageSize = '100';
+    this.frecuency = '2'; // revolutions by seconds
+    this.period = 1 / this.frecuency;
+    this.timeout = '0'; // seconds. 0 there is not timeout
+
 
     this.contentStyle = '';
     this.contentHTML = '';
-  }  
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.imageLoading = `
-      <div class="loader loader--style1">
+    this.imageLoading = null;
+    this.defaultImageLoading = () => `
         <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
         width="${this.imageSize}" height="${this.imageSize}" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
         <path opacity="0.2" fill="#000" d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
@@ -69,18 +96,34 @@ export class LoadingLayer extends LitElement {
             type="rotate"
             from="0 20 20"
             to="360 20 20"
-            dur="0.5s"
+            dur="${this.period}s"
             repeatCount="indefinite"/>
           </path>
         </svg>
       </div>
     `;
+
+    document.addEventListener('loading-layer_show', this.show.bind(this));
+    document.addEventListener('loading-layer_hide', this.hide.bind(this));
+  }  
+
+  updated() {
+    this.period = 1 / this.frecuency;
+    this.imageLoading = this.imageLoading || this.defaultImageLoading();
+    this.LoadingLayerHTML.innerHTML = `<div style="width:${this.imageSize}px; height:${this.imageSize}px" class="loader loader--style1">${this.imageLoading}</div>`;
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.imageLoading = this.imageLoading || this.defaultImageLoading();
     this.injectStyles();
     this.createLoadingLayer();
     this.bodyBlackedout.style.height = document.documentElement.clientHeight;
     this.LoadingLayerHTML.style.top = `calc(${window.scrollY}px + 50%)`;
     this.injectLoadingLayerElements();
-    this.show();
+    if (this.onLoadStart) {
+      this.show();
+    }
   }
 
   createLoadingLayer() {
@@ -99,7 +142,7 @@ export class LoadingLayer extends LitElement {
       style = document.createElement('style');
       style.setAttribute('id', 'LoadLayerContentStyles');
       style.setAttribute('type', 'text/css');
-      style.innerHTML = wcNameStyles; // + `.loading-layer { height: ${this.heightLoadingLayer}; width: ${this.widthLoadingLayer};  }`;
+      style.innerHTML = wcNameStyles;
       document.getElementsByTagName('head')[0].appendChild(style);
     }
   }
@@ -112,16 +155,15 @@ export class LoadingLayer extends LitElement {
   }
 
   hide() {
-    document.getElementById(this.loadLayerId).classList.remove('loading-layer-LoadingLayer-visible');
+    document.getElementById(this.loadLayerId).classList.remove('loading-layer-visible');
     document.getElementById(this.loadLayerBlackedId).classList.remove('loading-layer-blackedout-visible');
   }
 
   show() {
+    if (this.timeout > 0) {
+      setTimeout(this.hide.bind(this), this.timeout * 1000);
+    }
     document.getElementById(this.loadLayerId).classList.add('loading-layer-visible');
     document.getElementById(this.loadLayerBlackedId).classList.add('loading-layer-blackedout-visible');
-  }
-
-  render() {
-    return html``;
   }
 }

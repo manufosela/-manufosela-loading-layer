@@ -6,7 +6,7 @@ export const wcNameStyles = css`
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -100%);
+    transform: translate(-50%, -50%);
     padding: 45px;
     opacity: 0;
     pointer-events: none;
