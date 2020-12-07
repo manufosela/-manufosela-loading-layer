@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <title>loading-layer demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script type="module" src="../loading-layer.js"></script>
+    <style>
+      .blocks {
+        display:flex;
+        flex-direction:row;
+        flex-wrap: wrap;
+      }
+      .block {
+        display:flex;
+        flex-direction:column;
+        flex-wrap: wrap;
+        white-space: normal;
+      }
+      .code {
+        padding: 20px;
+        color:#FFF; 
+        background: #000;
+      }
+      .attributes {
+        padding-left: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic loading-layer Demo</h3>
+      <div class="blocks">
+        <pre class="block code">
+          <code>
+            &lt;loading-layer&gt;&lt;/loading-layer&gt;
+          </code>
+        </pre>
+        <pre class="block attributes">
+          <h3>Attributes</h3>
+          <ul>
+            <li>imageLoading (String)</li>
+            <li>imageSize (String)</li>
+          </ul>
+        </pre>
+      </div>
+
+      <loading-layer image-loading="" image-size="300"></loading-layer>
+    </div>
+  </body>
+</html>
